@@ -20,6 +20,8 @@ services:
     container_name: notificator
     ports:
     - 8802:8082
+    environment:
+      GOPROXY: http://10.120.1.209:3000
   users:
     build:
       context: .
@@ -30,6 +32,8 @@ services:
     container_name: users
     ports:
     - 8801:8081
+    environment:
+      GOPROXY: http://10.120.1.209:3000
   etcd:
     image: 'quay.io/coreos/etcd:v3.1.7'
     restart: always

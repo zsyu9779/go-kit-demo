@@ -1,11 +1,13 @@
 package service
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	endpoint1 "github.com/go-kit/kit/endpoint"
 	log "github.com/go-kit/kit/log"
 	prometheus "github.com/go-kit/kit/metrics/prometheus"
+	sdetcd "github.com/go-kit/kit/sd/etcdv3"
 	lightsteptracergo "github.com/lightstep/lightstep-tracer-go"
 	group "github.com/oklog/oklog/pkg/group"
 	opentracinggo "github.com/opentracing/opentracing-go"
