@@ -1,8 +1,7 @@
-package main
+package util
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
@@ -10,22 +9,13 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/hashicorp/consul/api"
 	"go-kit-demo/product/service"
+	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
 	"io"
 	"net/url"
 	"os"
 )
 
-func main2() {
-	target, _ := url.Parse("http://localhost:8080")
-	client := httptransport.NewClient("GET", target, service.GetUserInfoRequest,service.GetUserInfoResponse)
-	getUserInfo := client.Endpoint()
-	res, _ := getUserInfo(context.Background(),service.UserRequest{
-		Uid: 102,
-	})
-	userInfo := res.(service.UserResponse)
-	fmt.Printf("%+v\n",userInfo)
-}
-func main() {
+func ConsulClient() {
 	{
 		//第一步，创建client
 		config := api.DefaultConfig()
@@ -61,4 +51,5 @@ func main() {
 		}
 
 	}
+
 }

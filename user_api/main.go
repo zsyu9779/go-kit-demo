@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/hashicorp/consul/api"
 	"github.com/sirupsen/logrus"
-	. "go-kit-demo/service"
-	"go-kit-demo/util"
+	"go-kit-demo/user_api/service"
+	"go-kit-demo/user_api/util"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,10 +15,10 @@ import (
 )
 
 func main() {
-	user := UserService{}
-	endp := GenUserEndpoint(&user)
+	user := service.UserService{}
+	endp := service.GenUserEndpoint(&user)
 
-	serverHandler := httptranport.NewServer(endp, DecodeUserRequest, EncodeUserResponse)
+	serverHandler := httptranport.NewServer(endp, service.DecodeUserRequest, service.EncodeUserResponse)
 
 	r := mux.NewRouter()
 	//r.Handle(`/user/{uid:\d+}`,serverHandler)
