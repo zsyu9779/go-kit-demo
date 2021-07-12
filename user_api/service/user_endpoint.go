@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"github.com/go-kit/kit/endpoint"
+	"go-kit-demo/user_api/util"
+	"strconv"
 )
 
 type UserRequest struct {
@@ -16,7 +18,7 @@ type UserResponse struct {
 func GenUserEndpoint(userService IUserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error){
 		r := request.(UserRequest)
-		result := userService.GetName(r.Uid)
+		result := userService.GetName(r.Uid)+strconv.Itoa(util.ServicePort)
 		return UserResponse{Result: result},nil
 	}
 }

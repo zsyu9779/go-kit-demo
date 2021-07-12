@@ -2,12 +2,16 @@ package util
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
 	"github.com/sirupsen/logrus"
 	"net"
 )
 
 var consulClient *api.Client
+var ServiceId string
+var ServiceName string
+var ServicePort int
 
 func init() {
 	config := api.DefaultConfig()
@@ -17,20 +21,25 @@ func init() {
 		logrus.Fatal(err)
 	}
 	consulClient = client
+	ServiceId = "userservice"+uuid.New().String()
+}
+func SetServiceNameAndPort(name string,port int)  {
+	ServicePort = port
+	ServiceName = name
 }
 func Register() {
 	config := api.DefaultConfig()
 	config.Address = "127.0.0.1:8500"
 	check := api.AgentServiceCheck{
 		Interval: "5s",
-		HTTP:     fmt.Sprintf("http://%s:8080/health", getClientIp()),
+		HTTP:     fmt.Sprintf("http://%s:%d/health", getClientIp(),ServicePort),
 	}
 	reg := api.AgentServiceRegistration{
 		Kind:    "",
-		ID:      "userservice",
-		Name:    "userservice",
+		ID:      ServiceId,
+		Name:    ServiceName,
 		Tags:    []string{"primary"},
-		Port:    8080,
+		Port:    ServicePort,
 		Address: getClientIp(),
 		Check:   &check,
 	}
@@ -40,7 +49,7 @@ func Register() {
 	}
 }
 func DeRegister() {
-	consulClient.Agent().ServiceDeregister("userservice")
+	consulClient.Agent().ServiceDeregister(ServiceId)
 }
 func getClientIp() string {
 	addrs, _ := net.InterfaceAddrs()

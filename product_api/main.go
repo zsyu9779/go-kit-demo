@@ -7,12 +7,14 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd"
 	"github.com/go-kit/kit/sd/consul"
+	"github.com/go-kit/kit/sd/lb"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/hashicorp/consul/api"
 	"go-kit-demo/product/service"
 	"io"
 	"net/url"
 	"os"
+	"time"
 )
 
 func main2() {
@@ -50,12 +52,20 @@ func main() {
 				endpointer := sd.NewEndpointer(instancer, factory, logger)
 				endpoints, _ :=endpointer.Endpoints()
 				fmt.Println("has",len(endpoints),"services")
-				getUserInfo := endpoints[0]
-				res, _ := getUserInfo(context.Background(),service.UserRequest{
-					Uid: 102,
-				})
-				userInfo := res.(service.UserResponse)
-				fmt.Printf("%+v\n",userInfo)
+				//go-kit自带负载均衡策略：轮询负载
+				mylb := lb.NewRoundRobin(endpointer)
+
+				//for循环模拟请求
+				for  {
+					//轮询算法获取Endpoint
+					getUserInfo, _ := mylb.Endpoint()
+					res, _ := getUserInfo(context.Background(),service.UserRequest{
+						Uid: 102,
+					})
+					userInfo := res.(service.UserResponse)
+					fmt.Printf("%+v\n",userInfo)
+					time.Sleep(3*time.Second)
+				}
 
 			}
 		}
